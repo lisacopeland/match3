@@ -1,0 +1,31 @@
+<mat-toolbar class="header">
+  <div>
+    <button [matMenuTriggerFor]="menu" mat-icon-button aria-label="menu button">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>My Flowerz Game</span>
+  </div>
+  <div>
+    <button mat-icon-button aria-label="favorite button">
+      <mat-icon>favorite</mat-icon>
+    </button>
+    <button mat-icon-button aria-label="share button">
+      <mat-icon>share</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item routerLink="/mainmenu">
+    <mat-icon>dialpad</mat-icon>
+    <span>Main Menu</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>voicemail</mat-icon>
+    <span>Options</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>notifications_off</mat-icon>
+    <span>Help</span>
+  </button>
+</mat-menu>

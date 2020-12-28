@@ -18,11 +18,23 @@ export class GameBoardComponent implements OnInit {
     },
     {
       innerColor: yellow,
-      outerColor: blue
+      outerColor: yellow
     },
     {
       innerColor: blue,
       outerColor: yellow
+    },
+    {
+      innerColor: blue,
+      outerColor: blue
+    },
+    {
+      innerColor: yellow,
+      outerColor: blue
+    },
+    {
+      innerColor: red,
+      outerColor: blue
     }
   ];
   gameOption = '';

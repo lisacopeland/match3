@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FlowerInterface } from '../shared/models/flower.interface';
 
 @Component({
@@ -6,14 +6,17 @@ import { FlowerInterface } from '../shared/models/flower.interface';
   templateUrl: './flower-queue.component.html',
   styleUrls: ['./flower-queue.component.scss']
 })
-export class FlowerQueueComponent implements OnInit {
+export class FlowerQueueComponent implements OnChanges {
 
   @Input() flowers: FlowerInterface[] = [];
-  @Output() currentFlower = new EventEmitter<FlowerInterface>();
+  queueLeft = 0;
+  first3: FlowerInterface[] = [];
+
   constructor() { }
 
-  ngOnInit(): void {
-    // Generate the flower queue
+  ngOnChanges(): void {
+    this.queueLeft = this.flowers.length;
+    this.first3 = this.flowers.slice(0, 3).reverse();
   }
 
 }

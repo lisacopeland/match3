@@ -1,7 +1,19 @@
 .header {
   display: flex;
   flex-direction: row;
+  background-color: #0E8FE6;
   justify-content: space-between;
+  color: white;
+}
+
+.title-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.menu-button {
+  height: 45px;
 }
 
 .divider-space {

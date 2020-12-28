@@ -1,5 +1,11 @@
 <div class="queue-layout">
-  <div *ngFor="let flower of flowers">
-    <app-flower [innerColor]="flower.innerColor" [outerColor]="flower.outerColor"></app-flower>
+  <div></div>
+  <div class="visible-queue">
+    <div *ngFor="let flower of first3">
+      <app-flower [innerColor]="flower.innerColor" [outerColor]="flower.outerColor"></app-flower>
+    </div>
+  </div>
+  <div class="queue-left">
+    {{queueLeft}}
   </div>
 </div>

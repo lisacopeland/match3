@@ -16,6 +16,10 @@ import { FlowerComponent } from './flower/flower.component';
 import { GameBoardComponent } from './game-board/game-board.component';
 import { FlowerQueueComponent } from './flower-queue/flower-queue.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
+import { OptionsPageComponent } from './options-page/options-page.component';
+import { HelpPageComponent } from './help-page/help-page.component';
+import { ScoresPageComponent } from './scores-page/scores-page.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +28,11 @@ import { MainMenuComponent } from './main-menu/main-menu.component';
     FlowerComponent,
     GameBoardComponent,
     FlowerQueueComponent,
-    MainMenuComponent
+    MainMenuComponent,
+    OptionsPageComponent,
+    HelpPageComponent,
+    ScoresPageComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,

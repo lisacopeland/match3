@@ -1,7 +1,7 @@
 <div class="page">
   <div class="page-layout">
     <div class="header-section">
-      <h1>Kitty Toyz</h1>
+      <h1 class="title-header">Kitty Toyz</h1>
     </div>
     <div class="menu-column">
       <button class="game-button" (click)="onGotoGame('resume')">
@@ -10,13 +10,13 @@
       <button class="game-button" routerLink="/gameboard">
         New Game
       </button>
-      <button class="game-button">
+      <button class="game-button" routerLink="/options">
         Options
       </button>
-      <button class="game-button">
+      <button class="game-button" routerLink="/help">
         Help
       </button>
-      <button class="game-button">
+      <button class="game-button" routerLink="/scores">
         High Scores
       </button>
     </div>

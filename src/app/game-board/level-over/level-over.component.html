@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Level {{levelData.level}} Completed</h1>
+<div mat-dialog-content>
+  Level Score: {{ levelData.levelScore }}
+  Empty Square {{ levelData.emptySquareBonus }}
+  Total Score: {{ levelData.totalScore }}
+</div>
+<div mat-dialog-actions>
+  <button
+    mat-button
+    [mat-dialog-close]
+    cdkFocusInitial>Ok</button>
+</div>

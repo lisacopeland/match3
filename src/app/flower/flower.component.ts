@@ -13,7 +13,7 @@ export class FlowerComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log('hi from flower, ')
+    console.log('hi from flower, ');
   }
 
 }

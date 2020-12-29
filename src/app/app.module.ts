@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -20,6 +21,8 @@ import { OptionsPageComponent } from './options-page/options-page.component';
 import { HelpPageComponent } from './help-page/help-page.component';
 import { ScoresPageComponent } from './scores-page/scores-page.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { GameOverComponent } from './game-board/game-over/game-over.component';
+import { LevelOverComponent } from './game-board/level-over/level-over.component';
 
 @NgModule({
   declarations: [
@@ -32,13 +35,16 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     OptionsPageComponent,
     HelpPageComponent,
     ScoresPageComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    GameOverComponent,
+    LevelOverComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    MatDialogModule,
     MatDividerModule,
     MatIconModule,
     MatMenuModule,

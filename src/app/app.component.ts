@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { FlowerInterface } from './shared/models/flower.interface';
-import { blue, red, yellow } from './shared/models/flowercolors';
 
 @Component({
   selector: 'app-root',

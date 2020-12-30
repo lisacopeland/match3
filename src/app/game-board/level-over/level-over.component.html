@@ -1,12 +1,12 @@
 <h1 mat-dialog-title class="title-class">Level {{levelData.level}} Completed</h1>
-<div mat-dialog-content>
-  <div>
+<div class="modal-content" mat-dialog-content>
+  <div class="content-label">
       Level Score: {{ levelData.levelScore }}
   </div>
-  <div>
-      Empty Square {{ levelData.emptySquareBonus }}
+  <div class="content-label">
+      Empty Square: {{ levelData.emptySquareBonus }}
   </div>
-  <div>
+  <div class="content-label">
       Total Score: {{ levelData.totalScore }}
   </div>
 </div>

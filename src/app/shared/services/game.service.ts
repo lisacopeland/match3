@@ -5,7 +5,7 @@ import { GameDataInterface } from '@interfaces/game-board.interface';
 })
 export class GameService {
 
-  currentGame: GameDataInterface | undefined;
+  currentGame: GameDataInterface | undefined = undefined;
 
   // Method for saving a game (When user goes to the main menu)
   saveGame(gameData: GameDataInterface): void {

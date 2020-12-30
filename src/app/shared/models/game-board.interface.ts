@@ -20,6 +20,7 @@ export interface LevelDataInterface {
 export interface GameDataInterface {
   levelScore: number;
   totalScore: number;
+  level: number;
   board: GameRowInterface[];
   queue: FlowerInterface[];
 }

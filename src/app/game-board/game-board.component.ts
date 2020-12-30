@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlowerInterface } from '@interfaces/flower.interface';
-import { GameRowInterface, LevelDataInterface } from '@interfaces/game-board.interface';
+import { GameDataInterface, GameRowInterface, LevelDataInterface } from '@interfaces/game-board.interface';
 import { FlowerService } from '@services/flower.service';
 import { GameService } from '@services/game.service';
 import { setGameboard } from '../shared/utils/setboard';
@@ -22,6 +22,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   currentLevel = 1;
   emptySquareBonus = 0;
   levelScore = 0;
+  audio = new Audio();
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -31,8 +32,16 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const gameOption = this.route.snapshot.paramMap.get('option');
+    this.audio.src = '../../assets/audio/plantflower.mp3';
+    this.audio.load();
     if (gameOption && gameOption === 'resume') {
       // go back to the current game
+      const resumeData: GameDataInterface = this.gameService.getGame();
+      this.levelScore = resumeData?.levelScore;
+      this.currentScore = resumeData?.totalScore;
+      this.currentLevel = resumeData?.level;
+      this.gameboard = resumeData?.board;
+      this.flowers = resumeData?.queue;
     } else {
       // Start a new game
       this.initGameBoard();
@@ -42,6 +51,14 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // Save the game state so if the user wants to resume he can
     // Save the board, the queue
+    const gameData: GameDataInterface = {
+      levelScore: this.levelScore,
+      totalScore: this.currentScore,
+      level: this.currentLevel,
+      board: this.gameboard,
+      queue: this.flowers
+    };
+    this.gameService.saveGame(gameData);
   }
 
   initGameBoard(): void {
@@ -58,6 +75,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       (this.gameboard[rowIndex].row[squareIndex].useable)) {
         console.log('I will place a flower here!');
         // place the flower
+        this.audio.play();
         const nextFlower = this.flowers.shift();
         this.gameboard[rowIndex].row[squareIndex].flower = nextFlower;
         this.gameboard[rowIndex].row[squareIndex].occupied = true;
@@ -113,8 +131,18 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   calculateEmptySquareBonus(): number {
-    // Add up the number of empty squares
-    return 0;
+    // Add up the number of empty squares, a square is
+    // empty if it is useable and unoccupied
+    // TODO: use reduce here
+    let bonusScore = 0;
+    this.gameboard.forEach(row => {
+      row.row.forEach(square => {
+        if (square.useable && !square.occupied) {
+          bonusScore++;
+        }
+      });
+    });
+    return bonusScore;
   }
 
   displayLevelOverDialog(): void {
@@ -122,6 +150,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     // Calculate the emptySquareBonus
     const emptySquareBonus = this.calculateEmptySquareBonus();
     this.levelScore += emptySquareBonus;
+    this.currentScore += emptySquareBonus;
     const levelData: LevelDataInterface = {
       level: this.currentLevel,
       levelScore: this.levelScore,
@@ -142,6 +171,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       this.levelScore = 0;
       // Create new flower queue
       this.flowers = this.flowerService.getFlowerQueue(this.currentLevel);
+      this.gameboard = setGameboard(this.currentLevel, this.gameboard);
     });
   }
 

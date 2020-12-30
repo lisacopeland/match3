@@ -1,4 +1,3 @@
-import { UrlResolver } from '@angular/compiler';
 import { FlowerInterface } from '../models/flower.interface';
 import { GameRowInterface, GameSquareInterface } from '../models/game-board.interface';
 
@@ -25,7 +24,7 @@ export function setGameboard(level: number, gameBoard: GameRowInterface[]): Game
         const newSquare: GameSquareInterface = {
           occupied: false,
           useable: level1[i][j],
-          flower: null
+          flower: undefined
         };
         newRow.row.push(newSquare);
       }
@@ -44,7 +43,7 @@ export function setGameboard(level: number, gameBoard: GameRowInterface[]): Game
         const newSquare: GameSquareInterface = {
           occupied: (currentFlower !== null),
           useable,
-          flower: (useable) ? currentFlower : null
+          flower: (useable) ? currentFlower : undefined
         };
         newRow[j] = newSquare;
       }
@@ -56,13 +55,13 @@ export function setGameboard(level: number, gameBoard: GameRowInterface[]): Game
   return returnBoard;
 }
 
-export function getFlower(gameboardSquare: GameSquareInterface): FlowerInterface | null {
+export function getFlower(gameboardSquare: GameSquareInterface): FlowerInterface | undefined {
   if ((gameboardSquare === undefined) || (gameboardSquare === null)) {
-    return null;
+    return undefined;
   }
 
   if ((gameboardSquare.flower === undefined) || (gameboardSquare.flower === null)) {
-    return null;
+    return undefined;
   } else {
     return gameboardSquare.flower;
   }

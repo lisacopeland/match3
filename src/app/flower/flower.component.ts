@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FlowerInterface } from '@shared/models/flower.interface';
 
 @Component({
   selector: 'app-flower',
@@ -7,8 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class FlowerComponent implements OnInit {
 
-  @Input() innerColor: any;
-  @Input() outerColor: any;
+  @Input() flower: FlowerInterface | undefined;
 
   constructor() { }
 

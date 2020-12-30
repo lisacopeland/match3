@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FlowerInterface } from '../models/flower.interface';
+import { FlowerInterface } from '@interfaces/flower.interface';
 
 const colors = [
   '#A61515',   // red
@@ -13,7 +13,7 @@ const colors = [
 const levelData = [
   {
     level: 1,
-    queueLength: 10,
+    queueLength: 5,
     colorChoices: 3,
   },
   {
@@ -50,6 +50,7 @@ export class FlowerService {
           innerColor: colors[this.getRandom(currentLevelData.colorChoices)],
           outerColor: colors[this.getRandom(currentLevelData.colorChoices)]
         };
+        console.log('inner: ' + flower.innerColor + ' outer: ' + flower.outerColor);
         flowerArray.push(flower);
       }
     }
@@ -58,6 +59,7 @@ export class FlowerService {
   }
 
   getRandom(highest: number): number {
-    return Math.floor((Math.random() * (highest - 1)) + 0);
+    const next = Math.floor((Math.random() * (highest)) + 0);
+    return next;
   }
 }

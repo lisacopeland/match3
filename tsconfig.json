@@ -16,6 +16,20 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "es2020",
+    "paths": {
+      "@shared/*": [
+        "src/app/shared/*"
+      ],
+      "@interfaces/*": [
+        "src/app/shared/models/*"
+      ],
+      "@environments/*": [
+        "src/environments/*"
+      ],
+      "@services/*": [
+        "src/app/shared/services/*"
+      ]
+    },
     "lib": [
       "es2018",
       "dom"

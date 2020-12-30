@@ -23,6 +23,7 @@ import { ScoresPageComponent } from './scores-page/scores-page.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { GameOverComponent } from './game-board/game-over/game-over.component';
 import { LevelOverComponent } from './game-board/level-over/level-over.component';
+import { ScoreBoxComponent } from './game-board/score-box/score-box.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { LevelOverComponent } from './game-board/level-over/level-over.component
     ScoresPageComponent,
     PageNotFoundComponent,
     GameOverComponent,
-    LevelOverComponent
+    LevelOverComponent,
+    ScoreBoxComponent
   ],
   imports: [
     BrowserModule,

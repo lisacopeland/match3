@@ -1,26 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FlowerInterface } from '../shared/models/flower.interface';
-import { GameRowInterface } from '../shared/models/game-board.interface';
-import { FlowerService } from '../shared/services/flower.service';
+import { FlowerInterface } from '@interfaces/flower.interface';
+import { GameRowInterface, LevelDataInterface } from '@interfaces/game-board.interface';
+import { FlowerService } from '@services/flower.service';
+import { GameService } from '@services/game.service';
 import { setGameboard } from '../shared/utils/setboard';
 import { GameOverComponent } from './game-over/game-over.component';
 import { LevelOverComponent } from './level-over/level-over.component';
-
-export interface LevelDataInterface {
-  level: number;
-  levelScore: number;
-  emptySquareBonus: number;
-  totalScore: number;
-}
 
 @Component({
   selector: 'app-game-board',
   templateUrl: './game-board.component.html',
   styleUrls: ['./game-board.component.scss']
 })
-export class GameBoardComponent implements OnInit {
+export class GameBoardComponent implements OnInit, OnDestroy {
   flowers: FlowerInterface[] = [];
   gameOption = '';
   gameboard: GameRowInterface[] = [];
@@ -32,6 +26,7 @@ export class GameBoardComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private flowerService: FlowerService,
+              private gameService: GameService,
               public dialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -42,6 +37,11 @@ export class GameBoardComponent implements OnInit {
       // Start a new game
       this.initGameBoard();
     }
+  }
+
+  ngOnDestroy(): void {
+    // Save the game state so if the user wants to resume he can
+    // Save the board, the queue
   }
 
   initGameBoard(): void {
@@ -58,16 +58,25 @@ export class GameBoardComponent implements OnInit {
       (this.gameboard[rowIndex].row[squareIndex].useable)) {
         console.log('I will place a flower here!');
         // place the flower
+        const nextFlower = this.flowers.shift();
+        this.gameboard[rowIndex].row[squareIndex].flower = nextFlower;
+        this.gameboard[rowIndex].row[squareIndex].occupied = true;
+        const currQueue = this.flowers.slice();
+        this.flowers = [...currQueue];
         // See if there is a match, if so, update board and score
         // Check for game over
+        this.checkForGameOver();
         // Check for level done
         if (!this.flowers.length) {
-          // throw up level done modal,
-          // create new queue
+          this.displayLevelOverDialog();
         }
       } else {
         console.log('I cannot place a flower here!');
       }
+  }
+
+  checkForMatches(): void {
+    // See if you have 3 in a row
   }
 
   checkForGameOver(): void {
@@ -76,8 +85,9 @@ export class GameBoardComponent implements OnInit {
     let gameOver = true;
     this.gameboard.forEach(row => {
       row.row.forEach(square => {
-        if (!square.occupied) {
+        if ((square.useable) && (!square.occupied)) {
           gameOver = false;
+          return;
         }
       });
     });
@@ -103,7 +113,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   calculateEmptySquareBonus(): number {
-    // Add up the number of empty squares, times 10
+    // Add up the number of empty squares
     return 0;
   }
 
@@ -120,8 +130,8 @@ export class GameBoardComponent implements OnInit {
     };
 
     const dialogRef = this.dialog.open(LevelOverComponent, {
-      width: '250px',
-      data: levelData
+      data: levelData,
+      panelClass: 'custom-modalbox'
     });
 
     dialogRef.afterClosed().subscribe(result => {

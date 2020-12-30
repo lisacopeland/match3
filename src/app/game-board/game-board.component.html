@@ -1,16 +1,23 @@
 <div class="page-board">
+<!-- Header with menu icon and social media buttons -->
 <app-header></app-header>
+<!-- the flower queue display -->
 <app-flower-queue [flowers]="flowers"></app-flower-queue>
-<div class="game-rows board-layout">
-  <div class="game-row" *ngFor="let row of gameboard; let rowIndex = index">
-    <div *ngFor="let square of row.row; let squareIndex = index">
-      <div
-        class="game-square"
-        [ngClass]="{notuseable: !square?.useable}"
-        (click)="onPlaceFlower(rowIndex, squareIndex)">
-        <app-flower *ngIf="square.occupied" [innerColor]="square?.flower?.innerColor" [outerColor]="square?.flower?.outerColor"></app-flower>
+
+<div class="game-display">
+  <!-- Score display -->
+  <app-score-box [level]=currentLevel [score]=currentScore></app-score-box>
+  <!-- the game board-->
+  <div class="game-rows board-layout">
+    <div class="game-row" *ngFor="let row of gameboard; let rowIndex = index">
+      <div *ngFor="let square of row.row; let squareIndex = index">
+        <div class="game-square" [ngClass]="{notuseable: !square?.useable}"
+          (click)="onPlaceFlower(rowIndex, squareIndex)">
+          <app-flower *ngIf="square.occupied" [flower]="square?.flower"></app-flower>
+        </div>
       </div>
     </div>
   </div>
+  <div class="dummy-column"></div>
 </div>
 </div>

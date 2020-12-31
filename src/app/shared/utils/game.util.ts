@@ -196,7 +196,7 @@ export interface FlowerRunInterface {
   end: number;
 }
 
-export function checkRow(rowNumber: number, gameBoard: GameRowInterface[]): FlowerRunInterface {
+export function checkRow(rowNumber: number, gameBoard: GameRowInterface[]): FlowerRunInterface | null{
   let currentColor = '-1';
   let run = 0;
   let begIndex = -1;
@@ -245,5 +245,5 @@ export function checkRow(rowNumber: number, gameBoard: GameRowInterface[]): Flow
   }
   // If I get here, I didn't get a valid run and I went thru the whole row
   console.log('returning no match!');
-  return { start: -1, end: -1};
+  return null;
 }

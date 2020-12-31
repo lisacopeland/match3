@@ -27,7 +27,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   currentLevel = 1;
   emptySquareBonus = 0;
   levelScore = 0;
-  audio = new Audio();
+  plantAudio = new Audio();
+  matchAudio = new Audio();
   bounce = false;
 
   constructor(private route: ActivatedRoute,
@@ -42,8 +43,11 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const gameOption = this.route.snapshot.paramMap.get('option');
-    this.audio.src = '../../assets/audio/plantflower.mp3';
-    this.audio.load();
+    this.plantAudio.src = '../../assets/audio/plantflower.mp3';
+    this.plantAudio.load();
+    this.matchAudio.src = '../../assets/audio/match.mp3';
+    this.matchAudio.load();
+
     if (gameOption && gameOption === 'resume') {
       // go back to the current game
       const resumeData: GameDataInterface = this.gameService.getGame();
@@ -85,7 +89,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       (this.gameboard[rowIndex].row[squareIndex].useable)) {
         console.log('I will place a flower here!');
         // place the flower
-        this.audio.play();
+        this.plantAudio.play();
         const nextFlower = this.flowers.shift();
         this.gameboard[rowIndex].row[squareIndex].flower = nextFlower;
         this.gameboard[rowIndex].row[squareIndex].occupied = true;
@@ -94,6 +98,10 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         // See if there is a match, if so, update board and score
         console.log('current GameBoard ', this.gameboard);
         const result = checkRow(rowIndex, this.gameboard);
+        if (result) {
+          // There was a match, transform
+          this.transformRow(rowIndex, result.start, result.end);
+        }
         console.log('Result from checkRow is ', result);
         // Check for game over
         this.checkForGameOver();
@@ -104,6 +112,20 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       } else {
         console.log('I cannot place a flower here!');
       }
+  }
+
+  transformRow(rowNumber: number, start: number, end: number): void {
+    const row = this.gameboard[rowNumber].row;
+    for (let i = start; i <= end; i++) {
+      const square = row[i];
+      if (square.flower.innerColor === square.flower.outerColor) {
+        // make the flower disappear
+        square.occupied = false;
+        square.flower = undefined;
+      } else {
+        square.flower.outerColor = square.flower.innerColor;      }
+    }
+    this.matchAudio.play();
   }
 
   checkForMatches(): void {

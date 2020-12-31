@@ -5,14 +5,19 @@ import { FlowerInterface } from '@interfaces/flower.interface';
 import { GameDataInterface, GameRowInterface, LevelDataInterface } from '@interfaces/game-board.interface';
 import { FlowerService } from '@services/flower.service';
 import { GameService } from '@services/game.service';
-import { setGameboard } from '../shared/utils/setboard';
+import { checkRow, setGameboard } from '../shared/utils/game.util';
 import { GameOverComponent } from './game-over/game-over.component';
 import { LevelOverComponent } from './level-over/level-over.component';
+import { trigger, transition, useAnimation } from '@angular/animations';
+import { bounce } from 'ng-animate';
 
 @Component({
   selector: 'app-game-board',
   templateUrl: './game-board.component.html',
-  styleUrls: ['./game-board.component.scss']
+  styleUrls: ['./game-board.component.scss'],
+  animations: [
+    trigger('bounce', [transition('* => *', useAnimation(bounce))])
+  ]
 })
 export class GameBoardComponent implements OnInit, OnDestroy {
   flowers: FlowerInterface[] = [];
@@ -23,12 +28,17 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   emptySquareBonus = 0;
   levelScore = 0;
   audio = new Audio();
+  bounce = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private flowerService: FlowerService,
               private gameService: GameService,
               public dialog: MatDialog) { }
+
+  animate(name: 'string'): void {
+    this[name] = !this[name];
+  }
 
   ngOnInit(): void {
     const gameOption = this.route.snapshot.paramMap.get('option');
@@ -82,6 +92,9 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         const currQueue = this.flowers.slice();
         this.flowers = [...currQueue];
         // See if there is a match, if so, update board and score
+        console.log('current GameBoard ', this.gameboard);
+        const result = checkRow(rowIndex, this.gameboard);
+        console.log('Result from checkRow is ', result);
         // Check for game over
         this.checkForGameOver();
         // Check for level done
@@ -125,7 +138,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       if (result === 'start over') {
         this.initGameBoard();
       } else {
-        this.router.navigate(['/gameboard']);
+        this.router.navigate(['/mainmenu']);
       }
     });
   }

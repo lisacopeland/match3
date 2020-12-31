@@ -13,7 +13,7 @@
       <div *ngFor="let square of row.row; let squareIndex = index">
         <div class="game-square" [ngClass]="{notuseable: !square?.useable}"
           (click)="onPlaceFlower(rowIndex, squareIndex)">
-          <app-flower *ngIf="square.occupied" [flower]="square?.flower"></app-flower>
+          <app-flower [@bounce]="bounce" *ngIf="square.occupied" [flower]="square?.flower"></app-flower>
         </div>
       </div>
     </div>

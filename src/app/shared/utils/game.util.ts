@@ -164,13 +164,13 @@ export function setGameboard(level: number, gameBoard: GameRowInterface[]): Game
         const currentFlower = getFlower(gameBoard[i].row[j]);
         const useable = currentLevelInfo.places[i][j];
         const newSquare: GameSquareInterface = {
-          occupied: useable && (currentFlower !== null),
+          occupied: useable && (currentFlower !== undefined),
           useable,
           flower: (useable) ? currentFlower : undefined
         };
         newRow[j] = newSquare;
       }
-      returnBoard[i].row = newRow;
+      returnBoard.push({ row: newRow });
     }
 
   }
@@ -189,4 +189,61 @@ export function getFlower(gameboardSquare: GameSquareInterface): FlowerInterface
     return gameboardSquare.flower;
   }
 
+}
+
+export interface FlowerRunInterface {
+  start: number;
+  end: number;
+}
+
+export function checkRow(rowNumber: number, gameBoard: GameRowInterface[]): FlowerRunInterface {
+  let currentColor = '-1';
+  let run = 0;
+  let begIndex = -1;
+  let endIndex = -1;
+  let i = 0;
+  const row: GameRowInterface = gameBoard[rowNumber];
+  const rowRun: GameSquareInterface[] = row.row;
+  console.log('checking row ' + rowNumber);
+  while (i < 7) {
+    // if square is not occupied, you are starting over
+    console.log('on square ' + i + ' contents: ', rowRun[i]);
+    if (!rowRun[i].occupied) {
+      if (run > 2) {
+        return {
+          start: begIndex,
+          end: endIndex
+        };
+      } else {
+        currentColor = '-1';
+        run = 0;
+      }
+    } else { // Square is occupied
+      if (currentColor === '-1') { // Starting a new color
+        currentColor = rowRun[i].flower.outerColor;
+        run = 1;
+        begIndex = i;
+      } else { // This flower is a color, see if it is the currentColor
+        if (rowRun[i].flower.outerColor === currentColor) {
+          run++; // keep going!
+          endIndex = i;
+        } else { // This square is occupied, and the colors are different, the run is over
+          if (run > 2) {
+            return {
+              start: begIndex,
+              end: endIndex
+            };
+          } else { // This square is occupied with a different colored flower, start run over
+            currentColor = rowRun[i].flower.outerColor;
+            run = 1;
+            begIndex = i;
+          }
+        }
+      }
+    }
+    i++;
+  }
+  // If I get here, I didn't get a valid run and I went thru the whole row
+  console.log('returning no match!');
+  return { start: -1, end: -1};
 }

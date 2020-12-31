@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+
 import { FlowerInterface } from '@shared/models/flower.interface';
 
 @Component({
@@ -13,7 +14,7 @@ export class FlowerComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log('hi from flower, ');
   }
+
 
 }

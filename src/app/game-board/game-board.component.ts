@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlowerInterface } from '@interfaces/flower.interface';
@@ -20,7 +20,9 @@ import { bounce } from 'ng-animate';
   ]
 })
 export class GameBoardComponent implements OnInit, OnDestroy {
+  @ViewChild('curFlower') curFlowerElement;
   flowers: FlowerInterface[] = [];
+  currentFlower: FlowerInterface;
   gameOption = '';
   gameboard: GameRowInterface[] = [];
   currentScore = 0;
@@ -30,12 +32,25 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   plantAudio = new Audio();
   matchAudio = new Audio();
   bounce = false;
+  curPosX = 0;
+  curPosY = 0;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private flowerService: FlowerService,
               private gameService: GameService,
               public dialog: MatDialog) { }
+
+  @HostListener('mousemove', ['$event'])
+  handleMousemove(event): void {
+    this.curPosX = event.clientX;
+    this.curPosY = event.clientY;
+  }
+
+  @HostListener('click', ['$event'])
+  handleClick(event): void {
+    console.log('click!');
+  }
 
   animate(name: 'string'): void {
     this[name] = !this[name];
@@ -56,6 +71,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       this.currentLevel = resumeData?.level;
       this.gameboard = resumeData?.board;
       this.flowers = resumeData?.queue;
+      this.currentFlower = this.flowers.shift();
     } else {
       // Start a new game
       this.initGameBoard();
@@ -65,6 +81,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // Save the game state so if the user wants to resume he can
     // Save the board, the queue
+    // The currentFlower needs to be put back on the queue
+    this.flowers.unshift(this.currentFlower);
     const gameData: GameDataInterface = {
       levelScore: this.levelScore,
       totalScore: this.currentScore,
@@ -81,6 +99,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.currentScore = 0;
     this.currentLevel = 1;
     this.flowers = this.flowerService.getFlowerQueue(this.currentLevel);
+    this.currentFlower = this.flowers.shift();
   }
 
   onPlaceFlower(rowIndex: number, squareIndex: number): void {
@@ -90,8 +109,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         console.log('I will place a flower here!');
         // place the flower
         this.plantAudio.play();
-        const nextFlower = this.flowers.shift();
-        this.gameboard[rowIndex].row[squareIndex].flower = nextFlower;
+        // const nextFlower = this.flowers.shift();
+        this.gameboard[rowIndex].row[squareIndex].flower = this.currentFlower;
         this.gameboard[rowIndex].row[squareIndex].occupied = true;
         const currQueue = this.flowers.slice();
         this.flowers = [...currQueue];
@@ -108,6 +127,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         // Check for level done
         if (!this.flowers.length) {
           this.displayLevelOverDialog();
+        } else {
+          this.currentFlower = this.flowers.shift();
         }
       } else {
         console.log('I cannot place a flower here!');
@@ -206,6 +227,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       this.levelScore = 0;
       // Create new flower queue
       this.flowers = this.flowerService.getFlowerQueue(this.currentLevel);
+      this.currentFlower = this.flowers.shift();
       this.gameboard = setGameboard(this.currentLevel, this.gameboard);
     });
   }

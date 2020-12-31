@@ -10,6 +10,12 @@
   align-items: center;
   margin: 0px 40px 0px 40px;
 }
+.cursor-flower-style {
+  background-color: transparent;
+  z-index: 1000;
+  position: absolute;
+}
+
 .dummy-column {
   width: 210px;
 }

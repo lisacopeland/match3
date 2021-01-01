@@ -4,7 +4,7 @@
       <h1 class="title-header">Kitty Toyz</h1>
     </div>
     <div class="menu-column">
-      <button class="game-button" (click)="onGotoGame('resume')">
+      <button [disabled]=!canResume class="game-button" (click)="onGotoGame('resume')">
         Resume Game
       </button>
       <button class="game-button" routerLink="/gameboard">

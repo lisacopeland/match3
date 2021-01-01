@@ -1,7 +1,10 @@
-<h1 mat-dialog-title>GAME OVER</h1>
-<div mat-dialog-content>
+<h1 mat-dialog-title class="title-class">Game Over</h1>
+<div class="modal-content" mat-dialog-content>
+  <div class="content-label">
+    Your score: {{ data.score }}
+  </div>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onClose('start over')">Start Over</button>
-  <button mat-button (click)="onClose('main menu')">Main Menu</button>
+<div class="button-row" mat-dialog-actions>
+  <button mat-raised-button color="primary" (click)="onClose('start over')">Start Over</button>
+  <button mat-raised-button color="primary" (click)="onClose('main menu')">Main Menu</button>
 </div>

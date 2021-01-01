@@ -90,10 +90,12 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       board: this.gameboard,
       queue: this.flowers
     };
+    this.gameService.setCanResume(true);
     this.gameService.saveGame(gameData);
   }
 
   initGameBoard(): void {
+    this.gameService.setCanResume(true);
     this.gameboard = setGameboard(1, this.gameboard);
     this.levelScore = 0;
     this.currentScore = 0;
@@ -143,8 +145,13 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         // make the flower disappear
         square.occupied = false;
         square.flower = undefined;
+        this.currentScore += 10;
+        this.levelScore += 10;
       } else {
-        square.flower.outerColor = square.flower.innerColor;      }
+        square.flower.outerColor = square.flower.innerColor;
+        this.currentScore += 5;
+        this.levelScore += 5;
+      }
     }
     this.matchAudio.play();
   }
@@ -172,12 +179,15 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   displayGameOverDialog(): void {
     const dialogRef = this.dialog.open(GameOverComponent, {
-      width: '250px',
+      width: '275px',
+      height: '200px',
+      panelClass: 'custom-modalbox',
       data: { score: this.currentScore }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+      this.gameService.setCanResume(false);
       if (result === 'start over') {
         this.initGameBoard();
       } else {
@@ -216,7 +226,9 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open(LevelOverComponent, {
       data: levelData,
-      panelClass: 'custom-modalbox'
+      panelClass: 'custom-modalbox',
+      width: '300px',
+      height: '250px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -231,5 +243,4 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       this.gameboard = setGameboard(this.currentLevel, this.gameboard);
     });
   }
-
 }

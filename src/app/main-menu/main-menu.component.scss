@@ -4,4 +4,6 @@
   margin-left: 40px;
 }
 
-
+button.game-button:disabled {
+  background-color: darkgrey;
+}

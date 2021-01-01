@@ -15,9 +15,9 @@
     [style.left.px]="curPosX"
 		[style.top.px]="curPosY"
     [flower]="currentFlower"></app-flower>
-   <div class="game-row" *ngFor="let row of gameboard; let rowIndex = index">
+    <div class="game-row" *ngFor="let row of gameboard; let rowIndex = index">
       <div *ngFor="let square of row.row; let squareIndex = index">
-        <div class="game-square" [ngClass]="{notuseable: !square?.useable}"
+        <div class="game-square" id="{{'row'+rowIndex+'-square'+squareIndex}}" [ngClass]="{notuseable: !square?.useable}"
           (click)="onPlaceFlower(rowIndex, squareIndex)">
           <app-flower [@bounce]="bounce" *ngIf="square.occupied" [flower]="square?.flower"></app-flower>
         </div>
@@ -27,3 +27,4 @@
   <div class="dummy-column"></div>
 </div>
 </div>
+

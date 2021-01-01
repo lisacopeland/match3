@@ -41,16 +41,16 @@ export class GameBoardComponent implements OnInit, OnDestroy {
               private gameService: GameService,
               public dialog: MatDialog) { }
 
-  @HostListener('mousemove', ['$event'])
+@HostListener('mousemove', ['$event'])
   handleMousemove(event): void {
-    this.curPosX = event.clientX;
-    this.curPosY = event.clientY;
+    this.curPosX = event.clientX + 5;
+    this.curPosY = event.clientY + 5;
   }
 
-  @HostListener('click', ['$event'])
-  handleClick(event): void {
+/*   @HostListener('click', ['$event.target'])
+  handleClick(target): void {
     console.log('click!');
-  }
+  } */
 
   animate(name: 'string'): void {
     this[name] = !this[name];

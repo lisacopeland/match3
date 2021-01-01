@@ -11,7 +11,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-
+import { FlowerClickDirective } from '@shared/directives/flowerclick.directive';
 import { HeaderComponent } from './header/header.component';
 import { FlowerComponent } from './flower/flower.component';
 import { GameBoardComponent } from './game-board/game-board.component';
@@ -39,7 +39,8 @@ import { ScoreBoxComponent } from './game-board/score-box/score-box.component';
     PageNotFoundComponent,
     GameOverComponent,
     LevelOverComponent,
-    ScoreBoxComponent
+    ScoreBoxComponent,
+    FlowerClickDirective
   ],
   imports: [
     BrowserModule,

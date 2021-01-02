@@ -18,19 +18,25 @@ const levelData = [
   },
   {
     level: 2,
+    queueLength: 10,
+    colorChoices: 3,
+  },
+  {
+    level: 3,
     queueLength: 15,
     colorChoices: 4,
   },
   {
-    level: 3,
+    level: 4,
     queueLength: 20,
-    colorChoices: 5,
+    colorChoices: 4,
   },
   {
-    level: 4,
+    level: 5,
     queueLength: 25,
-    colorChoices: 6,
+    colorChoices: 5,
   }
+
 ];
 
 @Injectable({
@@ -38,7 +44,7 @@ const levelData = [
 })
 export class FlowerService {
 
-  getFlowerQueue(level: number): FlowerInterface[] {
+  getFlowerQueue(level: number, easy: boolean): FlowerInterface[] {
 
     const flowerArray: FlowerInterface[] = [];
     // Generate a random array of flowers, butterflies, and shovels
@@ -46,11 +52,12 @@ export class FlowerService {
     const currentLevelData = levelData.find(x => x.level === level);
     if (currentLevelData) {
       for (let x = 0; x < currentLevelData.queueLength; x++) {
+        const outerColor = colors[this.getRandom(currentLevelData.colorChoices)];
+        const innerColor = (easy) ? outerColor : colors[this.getRandom(currentLevelData.colorChoices)];
         const flower: FlowerInterface = {
-          innerColor: colors[this.getRandom(currentLevelData.colorChoices)],
-          outerColor: colors[this.getRandom(currentLevelData.colorChoices)]
+          innerColor,
+          outerColor
         };
-        console.log('inner: ' + flower.innerColor + ' outer: ' + flower.outerColor);
         flowerArray.push(flower);
       }
     }

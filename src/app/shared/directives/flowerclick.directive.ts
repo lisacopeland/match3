@@ -4,12 +4,11 @@ import { Directive, HostListener } from '@angular/core';
 export class FlowerClickDirective {
 
   @HostListener('click', ['$event.target']) onClick(target: any): void {
-    console.log(`You clicked on a flower with id ${target.id}`);
     const classList = target.className.split(' ');
     if (classList.includes('notuseable')) {
-      console.log('you cant click here');
+      // This not a useable square
     } else {
-      console.log('you can click here!');
+      // This is a useable square
     }
   }
 

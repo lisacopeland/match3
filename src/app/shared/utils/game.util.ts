@@ -204,10 +204,8 @@ export function checkRow(rowNumber: number, gameBoard: GameRowInterface[]): Flow
   let i = 0;
   const row: GameRowInterface = gameBoard[rowNumber];
   const rowRun: GameSquareInterface[] = row.row;
-  console.log('checking row ' + rowNumber);
   while (i < 7) {
     // if square is not occupied, you are starting over
-    console.log('on square ' + i + ' contents: ', rowRun[i]);
     if (!rowRun[i].occupied) {
       if (run > 2) {
         return {
@@ -243,7 +241,13 @@ export function checkRow(rowNumber: number, gameBoard: GameRowInterface[]): Flow
     }
     i++;
   }
-  // If I get here, I didn't get a valid run and I went thru the whole row
-  console.log('returning no match!');
-  return null;
+  // If I get here, and run > 2 then I got a valid run
+  if (run > 2) {
+    return {
+      start: begIndex,
+      end: endIndex
+    };
+  } else {
+    return null;
+  }
 }

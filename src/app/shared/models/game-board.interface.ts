@@ -21,6 +21,7 @@ export interface GameDataInterface {
   levelScore: number;
   totalScore: number;
   level: number;
+  easyDifficulty: boolean;
   board: GameRowInterface[];
   queue: FlowerInterface[];
 }

@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlowerInterface } from '@interfaces/flower.interface';
@@ -10,11 +10,13 @@ import { GameOverComponent } from './game-over/game-over.component';
 import { LevelOverComponent } from './level-over/level-over.component';
 import { trigger, transition, useAnimation } from '@angular/animations';
 import { bounce } from 'ng-animate';
+import { ChooseDifficultyComponent } from './choose-difficulty/choose-difficulty.component';
 
 @Component({
   selector: 'app-game-board',
   templateUrl: './game-board.component.html',
   styleUrls: ['./game-board.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('bounce', [transition('* => *', useAnimation(bounce))])
   ]
@@ -34,11 +36,13 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   bounce = false;
   curPosX = 0;
   curPosY = 0;
+  easyDifficulty = true;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private flowerService: FlowerService,
               private gameService: GameService,
+              private cdRef: ChangeDetectorRef,
               public dialog: MatDialog) { }
 
 @HostListener('mousemove', ['$event'])
@@ -49,7 +53,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
 /*   @HostListener('click', ['$event.target'])
   handleClick(target): void {
-    console.log('click!');
   } */
 
   animate(name: 'string'): void {
@@ -69,6 +72,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       this.levelScore = resumeData?.levelScore;
       this.currentScore = resumeData?.totalScore;
       this.currentLevel = resumeData?.level;
+      this.easyDifficulty = resumeData.easyDifficulty;
       this.gameboard = resumeData?.board;
       this.flowers = resumeData?.queue;
       this.currentFlower = this.flowers.shift();
@@ -87,6 +91,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       levelScore: this.levelScore,
       totalScore: this.currentScore,
       level: this.currentLevel,
+      easyDifficulty: this.easyDifficulty,
       board: this.gameboard,
       queue: this.flowers
     };
@@ -100,15 +105,24 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.levelScore = 0;
     this.currentScore = 0;
     this.currentLevel = 1;
-    this.flowers = this.flowerService.getFlowerQueue(this.currentLevel);
-    this.currentFlower = this.flowers.shift();
+
+    const dialogRef = this.dialog.open(ChooseDifficultyComponent, {
+      width: '275px',
+      height: '200px',
+      panelClass: 'custom-modalbox'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Result can be 'easy' 'hard'
+      this.easyDifficulty = (result === 'easy')
+      this.flowers = this.flowerService.getFlowerQueue(this.currentLevel, this.easyDifficulty);
+      this.currentFlower = this.flowers.shift();
+    });
   }
 
   onPlaceFlower(rowIndex: number, squareIndex: number): void {
-    console.log('user clicked on ' + rowIndex, squareIndex);
     if ((!this.gameboard[rowIndex].row[squareIndex].occupied) &&
       (this.gameboard[rowIndex].row[squareIndex].useable)) {
-        console.log('I will place a flower here!');
         // place the flower
         this.plantAudio.play();
         // const nextFlower = this.flowers.shift();
@@ -116,14 +130,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         this.gameboard[rowIndex].row[squareIndex].occupied = true;
         const currQueue = this.flowers.slice();
         this.flowers = [...currQueue];
-        // See if there is a match, if so, update board and score
-        console.log('current GameBoard ', this.gameboard);
-        const result = checkRow(rowIndex, this.gameboard);
-        if (result) {
-          // There was a match, transform
-          this.transformRow(rowIndex, result.start, result.end);
-        }
-        console.log('Result from checkRow is ', result);
+        this.cdRef.detectChanges();
+        this.checkForMatches(rowIndex);
         // Check for game over
         this.checkForGameOver();
         // Check for level done
@@ -132,8 +140,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         } else {
           this.currentFlower = this.flowers.shift();
         }
-      } else {
-        console.log('I cannot place a flower here!');
       }
   }
 
@@ -151,13 +157,25 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         square.flower.outerColor = square.flower.innerColor;
         this.currentScore += 5;
         this.levelScore += 5;
+        this.cdRef.detectChanges();
       }
     }
     this.matchAudio.play();
   }
 
-  checkForMatches(): void {
+  checkForMatches(rowIndex): void {
     // See if you have 3 in a row
+    // See if there is a match, if so, update board and score
+    let foundMatch = true;
+    while (foundMatch) {
+      const result = checkRow(rowIndex, this.gameboard);
+      if (result) {
+        // There was a match, transform
+        this.transformRow(rowIndex, result.start, result.end);
+      } else {
+        foundMatch = !foundMatch;
+      }
+    }
   }
 
   checkForGameOver(): void {
@@ -186,7 +204,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       this.gameService.setCanResume(false);
       if (result === 'start over') {
         this.initGameBoard();
@@ -232,13 +249,12 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       // level = level + 1
       this.currentLevel++;
       // level Score = 0;
       this.levelScore = 0;
       // Create new flower queue
-      this.flowers = this.flowerService.getFlowerQueue(this.currentLevel);
+      this.flowers = this.flowerService.getFlowerQueue(this.currentLevel, this.easyDifficulty);
       this.currentFlower = this.flowers.shift();
       this.gameboard = setGameboard(this.currentLevel, this.gameboard);
     });

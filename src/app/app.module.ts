@@ -24,6 +24,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { GameOverComponent } from './game-board/game-over/game-over.component';
 import { LevelOverComponent } from './game-board/level-over/level-over.component';
 import { ScoreBoxComponent } from './game-board/score-box/score-box.component';
+import { ChooseDifficultyComponent } from './game-board/choose-difficulty/choose-difficulty.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { ScoreBoxComponent } from './game-board/score-box/score-box.component';
     GameOverComponent,
     LevelOverComponent,
     ScoreBoxComponent,
-    FlowerClickDirective
+    FlowerClickDirective,
+    ChooseDifficultyComponent
   ],
   imports: [
     BrowserModule,

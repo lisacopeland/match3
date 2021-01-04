@@ -251,3 +251,64 @@ export function checkRow(rowNumber: number, gameBoard: GameRowInterface[]): Flow
     return null;
   }
 }
+
+export function checkColumn(columnNumber: number, gameBoard: GameRowInterface[]): FlowerRunInterface | null {
+  let currentColor = '-1';
+  let run = 0;
+  let begIndex = -1;
+  let endIndex = -1;
+  let i = 0;
+
+  // Create the array of squares to check
+  const colRun: GameSquareInterface[] = [];
+  for (let x = 0; x < 7; x++) {
+    colRun.push(gameBoard[x].row[columnNumber]);
+  }
+
+  while (i < 7) {
+    // if square is not occupied, you are starting over
+    if (!colRun[i].occupied) {
+      if (run > 2) {
+        return {
+          start: begIndex,
+          end: endIndex
+        };
+      } else {
+        currentColor = '-1';
+        run = 0;
+      }
+    } else { // Square is occupied
+      if (currentColor === '-1') { // Starting a new color
+        currentColor = colRun[i].flower.outerColor;
+        run = 1;
+        begIndex = i;
+      } else { // This flower is a color, see if it is the currentColor
+        if (colRun[i].flower.outerColor === currentColor) {
+          run++; // keep going!
+          endIndex = i;
+        } else { // This square is occupied, and the colors are different, the run is over
+          if (run > 2) {
+            return {
+              start: begIndex,
+              end: endIndex
+            };
+          } else { // This square is occupied with a different colored flower, start run over
+            currentColor = colRun[i].flower.outerColor;
+            run = 1;
+            begIndex = i;
+          }
+        }
+      }
+    }
+    i++;
+  }
+  // If I get here, and run > 2 then I got a valid run
+  if (run > 2) {
+    return {
+      start: begIndex,
+      end: endIndex
+    };
+  } else {
+    return null;
+  }
+}

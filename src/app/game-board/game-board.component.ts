@@ -5,7 +5,7 @@ import { FlowerInterface } from '@interfaces/flower.interface';
 import { GameDataInterface, GameRowInterface, LevelDataInterface } from '@interfaces/game-board.interface';
 import { FlowerService } from '@services/flower.service';
 import { GameService } from '@services/game.service';
-import { checkRow, setGameboard } from '../shared/utils/game.util';
+import { checkColumn, checkRow, setGameboard } from '../shared/utils/game.util';
 import { GameOverComponent } from './game-over/game-over.component';
 import { LevelOverComponent } from './level-over/level-over.component';
 import { trigger, transition, useAnimation } from '@angular/animations';
@@ -45,6 +45,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
               private cdRef: ChangeDetectorRef,
               public dialog: MatDialog) { }
 
+// For making the current piece follow the mouse
 @HostListener('mousemove', ['$event'])
   handleMousemove(event): void {
     this.curPosX = event.clientX + 5;
@@ -131,7 +132,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         const currQueue = this.flowers.slice();
         this.flowers = [...currQueue];
         this.cdRef.detectChanges();
-        this.checkForMatches(rowIndex);
+        this.checkForMatches(rowIndex, squareIndex);
         // Check for game over
         this.checkForGameOver();
         // Check for level done
@@ -143,7 +144,9 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       }
   }
 
-  transformRow(rowNumber: number, start: number, end: number): void {
+  transformRow(rowNumber: number, start: number, end: number): number[] {
+    // Return an array of the squares checked
+    const changedSquares = [];
     const row = this.gameboard[rowNumber].row;
     for (let i = start; i <= end; i++) {
       const square = row[i];
@@ -155,25 +158,54 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         this.levelScore += 10;
       } else {
         square.flower.outerColor = square.flower.innerColor;
+        changedSquares.push(i);
         this.currentScore += 5;
         this.levelScore += 5;
-        this.cdRef.detectChanges();
       }
     }
+    this.cdRef.detectChanges();
     this.matchAudio.play();
+    return changedSquares;
   }
 
-  checkForMatches(rowIndex): void {
+  transformCol(colNumber: number, start: number, end: number): number[] {
+    // Return an array of the squares checked
+    const changedSquares = [];
+    // const row = this.gameboard[rowNumber].row;
+    for (let i = start; i <= end; i++) {
+      const square = this.gameboard[i].row[colNumber];
+      if (square.flower.innerColor === square.flower.outerColor) {
+        // make the flower disappear
+        square.occupied = false;
+        square.flower = undefined;
+        this.currentScore += 10;
+        this.levelScore += 10;
+      } else {
+        square.flower.outerColor = square.flower.innerColor;
+        changedSquares.push(i);
+        this.currentScore += 5;
+        this.levelScore += 5;
+      }
+    }
+    this.cdRef.detectChanges();
+    this.matchAudio.play();
+    return changedSquares;
+  }
+
+  checkForMatches(rowIndex: number, columnIndex): void {
     // See if you have 3 in a row
     // See if there is a match, if so, update board and score
     let foundMatch = true;
+    // let gotChangedSquares = false;
     while (foundMatch) {
-      const result = checkRow(rowIndex, this.gameboard);
-      if (result) {
-        // There was a match, transform
-        this.transformRow(rowIndex, result.start, result.end);
-      } else {
-        foundMatch = !foundMatch;
+      const rowRun = checkRow(rowIndex, this.gameboard);
+      const columnRun = checkColumn(columnIndex, this.gameboard);
+      foundMatch = (rowRun !== null) || (columnRun !== null);
+      if (rowRun !== null) {
+        const changedColSquares = this.transformRow(rowIndex, rowRun.start, rowRun.end);
+      }
+      if (columnRun !== null) {
+        const changedRowSquares = this.transformCol(columnIndex, columnRun.start, columnRun.end);
       }
     }
   }

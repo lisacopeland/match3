@@ -115,7 +115,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       // Result can be 'easy' 'hard'
-      this.easyDifficulty = (result === 'easy')
+      this.easyDifficulty = (result === 'easy');
       this.flowers = this.flowerService.getFlowerQueue(this.currentLevel, this.easyDifficulty);
       this.currentFlower = this.flowers.shift();
     });

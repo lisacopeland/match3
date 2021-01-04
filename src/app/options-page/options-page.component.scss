@@ -1,0 +1,9 @@
+.menu-column {
+  display: flex;
+  flex-direction: column;
+  margin-left: 40px;
+}
+
+button.game-button:disabled {
+  background-color: darkgrey;
+}
